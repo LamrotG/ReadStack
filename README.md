@@ -26,9 +26,9 @@ Most "read later" apps turn into a graveyard of saved links nobody opens again. 
 ## Tech stack
 
 
-- **Frontend:** React
+- **Frontend:** HTML, JS, CSS
 - **Backend:** Node.js 
-- **Database:**. PostgreSQL
+- **Database:**. PostgreSQL (Neon)
 - **Auth:** Email + password sign-up, username / Email + password sign-in
 
 
