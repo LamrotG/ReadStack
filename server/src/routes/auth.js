@@ -29,8 +29,10 @@ function fullUser(row) {
   };
 }
 
-async function issueSession(res, user) {
-  setSessionCookie(res, signSession({ id: user.id, email: user.email }));
+function issueSession(res, user) {
+  const token = signSession({ id: user.id, email: user.email });
+  setSessionCookie(res, token);
+  return token;
 }
 
 // ── POST /api/auth/signup ─────────────────────────────────────────────────────
@@ -58,8 +60,8 @@ router.post(
       [email, hash]
     );
 
-    await issueSession(res, rows[0]);
-    res.status(201).json({ status: "ok", user: fullUser(rows[0]) });
+    const token = issueSession(res, rows[0]);
+    res.status(201).json({ status: "ok", user: fullUser(rows[0]), token });
   })
 );
 
@@ -67,7 +69,6 @@ router.post(
 router.post(
   "/login",
   asyncHandler(async (req, res) => {
-    // Accept either "identifier" (new) or legacy "username" field
     const identifier = String(req.body?.identifier || req.body?.username || "").trim().toLowerCase();
     const password = String(req.body?.password || "");
 
@@ -90,8 +91,8 @@ router.post(
       return res.status(401).json({ error: "invalid_credentials" });
     }
 
-    await issueSession(res, user);
-    res.json({ status: "ok", user: fullUser(user) });
+    const token = issueSession(res, user);
+    res.json({ status: "ok", user: fullUser(user), token });
   })
 );
 
