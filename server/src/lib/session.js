@@ -19,15 +19,19 @@ export function verifySession(token) {
   return { id: payload.sub, email: payload.email };
 }
 
-export function setSessionCookie(res, token) {
-  res.cookie(SESSION_COOKIE, token, {
+function cookieOptions() {
+  const prod = process.env.NODE_ENV === "production";
+  return {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    maxAge: SESSION_MAX_AGE_MS,
-  });
+    secure:   prod,
+    sameSite: prod ? "none" : "lax",
+  };
+}
+
+export function setSessionCookie(res, token) {
+  res.cookie(SESSION_COOKIE, token, { ...cookieOptions(), maxAge: SESSION_MAX_AGE_MS });
 }
 
 export function clearSessionCookie(res) {
-  res.clearCookie(SESSION_COOKIE);
+  res.clearCookie(SESSION_COOKIE, cookieOptions());
 }
